@@ -77,6 +77,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   depends_on = [aws_lambda_function.lambda,aws_sqs_queue.queue ]
 }
 
+# environment var for cloudwatch log
 resource "aws_lambda_function" "lambda" {
   function_name = "tf-challenge-lambda"
   handler = "handler.handler"
