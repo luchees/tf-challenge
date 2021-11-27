@@ -1,6 +1,9 @@
-exports.handler = (event, context, callback) => {
-  // TODO implement
-  console.log(event);
-  // write event to log
-  callback(null, 'Hello from Lambda');
+exports.handler = (event) => {
+  if (event.Records[0]?.body) {
+    const { message } = JSON.parse(event.Records[0].body);
+    if (message) {
+      return console.log(message);
+    }
+  }
+  throw Error('invalid event');
 };

@@ -10,13 +10,17 @@ terraform {
 }
 
 provider "aws" {
-  profile = "default"
+  profile = "personal"
+}
+provider "aws" {
+  profile = "personal"
   region  = "ap-southeast-1"
+  alias   = "region"
   default_tags {
     tags = {
       Environment = "dev"
       Owner       = "Lucas"
-      Project     = "tf-challenge"
+      Project     = "${var.app_name}"
     }
   }
 }

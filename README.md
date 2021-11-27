@@ -1,4 +1,6 @@
-# tf-challenge
+# ${var.app_name}
+
+https://github.com/aws-samples/aws-ingesting-click-logs-using-terraform
 
 # Setup
 
