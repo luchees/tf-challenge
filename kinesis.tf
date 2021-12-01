@@ -44,7 +44,7 @@ resource "aws_glue_catalog_table" "kinesis" {
       streamARN : aws_kinesis_stream.kinesis.arn,
     }
 
-    location     = aws_kinesis_stream.kinesis.name
+    location      = aws_kinesis_stream.kinesis.name
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
 

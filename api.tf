@@ -75,6 +75,9 @@ resource "aws_iam_role_policy_attachment" "api" {
 resource "aws_api_gateway_rest_api" "api" {
   name        = "${var.app_name}-sqs-api"
   description = "POST records to SQS queue"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 resource "aws_api_gateway_request_validator" "api" {
@@ -87,8 +90,7 @@ resource "aws_api_gateway_model" "api" {
   name         = "PayloadValidator"
   description  = "validate the json body content conforms to the below spec"
   content_type = "application/json"
-
-  schema = <<EOF
+  schema       = <<EOF
 {
   "type": "object",
   "required": [ "message"],
@@ -152,6 +154,31 @@ resource "aws_api_gateway_integration_response" "response_200" {
 
   response_templates = {
     "application/json" = "{\"message\": \"great success!\"}"
+  }
+
+  depends_on = [aws_api_gateway_integration.api]
+}
+
+resource "aws_api_gateway_method_response" "response_4xx" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.api.http_method
+  status_code = 400
+
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
+resource "aws_api_gateway_integration_response" "response_4xx" {
+  rest_api_id       = aws_api_gateway_rest_api.api.id
+  resource_id       = aws_api_gateway_rest_api.api.root_resource_id
+  http_method       = aws_api_gateway_method.api.http_method
+  status_code       = aws_api_gateway_method_response.response_4xx.status_code
+  selection_pattern = "^4[0-9][0-9]" // regex pattern for any 4xx message that comes back from SQS
+
+  response_templates = {
+    "application/json" = "{\"error\": \" use following json structure in body for an succesfull response: { \"message\": \"example message\" } }"
   }
 
   depends_on = [aws_api_gateway_integration.api]
